@@ -3,24 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Redirect and Close</title>
+    <title>Launcher for About:Blank</title>
     <script type="text/javascript">
         window.onload = function() {
             // Ask the user for a website URL
-            var website = prompt("Enter the website URL you want to open:", "https://example.com");
+            var website = prompt("Enter the website URL you want to open in the iframe:", "https://example.com");
 
             // Check if the user entered a valid URL
             if (website && website.startsWith("http")) {
-                // Open a new blank window
-                var newWindow = window.open('about:blank', '_blank');
-                
-                // Redirect the new window to the user-entered URL
-                newWindow.location.href = website;
+                // Open a new blank tab
+                var newTab = window.open('about:blank', '_blank');
 
-                // Close the original window after a brief delay
-                setTimeout(function() {
-                    window.close();
-                }, 1000);  // Delay to allow the new window to open first
+                // Write an HTML structure into the new tab
+                newTab.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Iframe Viewer</title>
+                        <style>
+                            body {
+                                margin: 0;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                                background-color: #f0f0f0;
+                            }
+                            iframe {
+                                width: 90%;
+                                height: 90%;
+                                border: none;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <iframe src="${website}" frameborder="0"></iframe>
+                    </body>
+                    </html>
+                `);
+
+                // Close the document stream to finish loading
+                newTab.document.close();
             } else {
                 alert("Invalid URL. Please enter a valid URL starting with http:// or https://");
             }
@@ -28,7 +53,7 @@
     </script>
 </head>
 <body>
-    <h1>Website Loaded</h1>
-    <p>This page will ask for a website URL, open it in a new window, and then close itself.</p>
+    <h1>About:Blank Launcher</h1>
+    <p>Opens the user-provided URL in an iframe within a new tab set to about:blank.</p>
 </body>
 </html>
